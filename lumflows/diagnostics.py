@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-def display_rta(wavelength, R_f, T_f, R_r, T_r, R_corr, T_corr, xlims = [250, 2500]):
+def display_rta(wavelength, R_f, T_f, R_r, T_r, R_corr, T_corr, xlims = [210, 2500]):
     
     colors = ["black", "#4361ee", "#e5383b"]
     

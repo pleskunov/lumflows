@@ -8,7 +8,7 @@ def compute_with_backside(wavelength, R_f, T_f, R_r, T_r, N_substrate, d_substra
     T_corr = []
     n_air = 1.003                              # air
     d = d_substrate / 1000.0                   # substrate thickness to m
-    propagation_angle = 0                      # TODO: check 
+    propagation_angle = 90                     # TODO: check 
     beta = []                                  # absoprtion term
 
     for i in range(len(wavelength)):
@@ -19,7 +19,7 @@ def compute_with_backside(wavelength, R_f, T_f, R_r, T_r, N_substrate, d_substra
         T_b.append(1 - R_b[i])
 
         # Absorption term
-        _alpha = N_substrate[i] * math.sin(propagation_angle)        
+        _alpha = N_substrate[i] * math.sin(math.radians(propagation_angle))        
         _beta = np.imag(((2 * np.pi) / wavelength[i]) * np.sqrt(N_substrate[i]**2 - _alpha**2 * d))
         beta.append(_beta)
 
