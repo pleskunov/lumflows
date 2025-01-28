@@ -1,37 +1,59 @@
 import math
+import cmath
 import numpy as np
 
-def compute_with_backside(wavelength, R_f, T_f, R_r, T_r, N_substrate, d_substrate = 2.0):
-    R_b = []
-    T_b = []
-    R_corr = []
-    T_corr = []
-    n_air = 1.003                              # air
-    d = d_substrate * 1e6                      # substrate thickness to nm
-    propagation_angle = 0                      # normal incidence
-    beta = []                                  # absoprtion term
+def compute_with_backside(wvls, R_f, T_f, R_r, T_r, N_sub):
 
-    for i in range(len(wavelength)):
-        # Compute R and T for the air-glass interface at the backside of the substrate,
-        # using Fresnel eqs (assume normal incidence).
-        r_b = (np.abs((np.real(N_substrate[i]) - n_air) / (np.real(N_substrate[i]) + n_air)))**2
-        R_b.append(r_b)
-        T_b.append(1 - R_b[i])
+    if len(wvls) != len(N_sub):
+        raise ValueError("The lengths of wavelengths and refractive index of the substrate must be equal!")
 
-        # Absorption term
-        _alpha = N_substrate[i] * math.sin(math.radians(propagation_angle))        
-        _beta = np.imag(((2 * np.pi) / wavelength[i]) * np.sqrt(N_substrate[i]**2 - _alpha**2) * d)
-        beta.append(_beta)
+    # Constants
+    two_pi: float    = 2.0 * math.pi
+    n_air: float     = 1.003
+    thickness: float = 1000000.0
+    theta: float     = 0.0
+    
+    R_forward = np.array(R_f, dtype=float).flatten()
+    T_forward = np.array(T_f, dtype=float).flatten()
+    R_reverse = np.array(R_r, dtype=float).flatten()
+    T_reverse = np.array(T_r, dtype=float).flatten()
 
-    # Backside correction
-    for i in range(len(wavelength)):
+    # Compute R and T for the air-glass interface at the backside of the substrate, using Fresnel eqs.
+    R_back = np.zeros_like(wvls, dtype=float)
+    T_back = np.zeros_like(R_back, dtype=float)
+    for i in range(len(wvls)):
+        n = np.real(N_sub[i])
+        R_back[i] = np.abs((n - n_air) / (n + n_air))**2
+        T_back[i] = 1.0 - R_back[i]
+
+    # Compute the substrate absoprtion term
+    beta_i = np.zeros_like(wvls, dtype=float)
+    sin_theta: float = math.sin(math.radians(theta))
+
+    for i in range(len(wvls)):
+        # alpha squared
+        n_sin_theta: complex = N_sub[i] * sin_theta
+        sin2: complex = n_sin_theta * n_sin_theta
+
+        N_square: complex = N_sub[i] * N_sub[i]
+        N_s_s: complex = cmath.sqrt(N_square - sin2)
+
+        # Correct branch selection
+        if N_s_s.real == 0.0:
+            N_s_s = -N_s_s
+
+        beta_i[i] = np.imag(two_pi * thickness * N_s_s / wvls[i])
         
-        r_corr = R_f[i] + \
-            (T_f[i] * T_r[i] * R_b[i] * math.exp(4 * beta[i])) / (1 - R_r[i] * R_b[i] * math.exp(4 * beta[i]))
-        
-        t_corr = (T_f[i] * T_b[i] * math.exp(2 * beta[i])) / (1 - R_r[i] * R_b[i] * math.exp(4 * beta[i]))
-        
-        R_corr.append(r_corr)
-        T_corr.append(t_corr)
+        # Debug
+        print(beta_i[i])
 
-    return R_corr, T_corr
+    # Compute R and T spectra with backside correction
+    R_corrected = np.zeros_like(R_forward, dtype=float)
+    T_corrected = np.zeros_like(R_corrected, dtype=float)
+
+    for i in range(len(wvls)):
+        R_corrected[i] = R_forward[i] + (T_forward[i] * T_reverse[i] * R_back[i] * math.exp(4.0 * beta_i[i])) / (1.0 - R_reverse[i] * R_back[i] * math.exp(4.0 * beta_i[i]))
+        
+        T_corrected[i] = (T_forward[i] * T_back[i] * math.exp(2.0 * beta_i[i])) / (1.0 - R_reverse[i] * R_back[i] * math.exp(4.0 * beta_i[i]))
+
+    return R_corrected, T_corrected
