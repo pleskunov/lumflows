@@ -1,25 +1,29 @@
 import matplotlib.pyplot as plt
 
-def display_rta(wavelength, R_f, T_f, R_r, T_r, R_corr, T_corr, xlims = [210, 2500]):
+def display_spectra(wvls, R_f, T_f, R_r, T_r, R = None, T = None, xlims = [210, 2500]):
     
-    colors = ["black", "#4361ee", "#e5383b"]
+    # Colorscheme
+    colors = ["black", "red", "blue"]
+    labels = ["forward", "reverse", "with backside"]
     
     fig, axs = plt.subplots(2, sharex=True)
     
-    fig.suptitle('R, T and A')
-    axs[0].plot(wavelength, R_f, "-", label="forward", color=colors[0])
-    axs[0].plot(wavelength, R_r, "--", label="reverse", color=colors[1])
-    axs[0].plot(wavelength, R_corr, "-", label="corrected", color=colors[2])
+    fig.suptitle('R and T spectra')
+    axs[0].plot(wvls, R_f, "-", label=labels[0], color=colors[0])
+    axs[0].plot(wvls, R_r, "--", label=labels[1], color=colors[1])
+    if R is not None:
+        axs[0].plot(wvls, R, "-", label=labels[2], color=colors[2])
     axs[0].set_xlim(xlims)
-    axs[0].set_ylabel("$R_{f}$ and $R_{r}$")
+    axs[0].set_ylabel("$R_{fw}$ and $R_{rv}$")
 
-    axs[1].plot(wavelength, T_f, "-", label="forward", color=colors[0])
-    axs[1].plot(wavelength, T_r, "--", label="backward", color=colors[1])
-    axs[1].plot(wavelength, T_corr, "-", label="corrected", color=colors[2])
+    axs[1].plot(wvls, T_f, "-", label=labels[0], color=colors[0])
+    axs[1].plot(wvls, T_r, "--", label=labels[1], color=colors[1])
+    if T is not None:
+        axs[1].plot(wvls, T, "-", label=labels[2], color=colors[2])
     axs[1].set_xlim(xlims)
-    axs[1].set_ylabel("$T_{f}$ and $T_{r}$")
+    axs[1].set_ylabel("$T_{fw}$ and $T_{rv}$")
     
-    axs[1].set_xlabel("Wavelength (nm)")
+    axs[1].set_xlabel("Wavelength [nm]")
     axs[1].legend()
 
     plt.show()
