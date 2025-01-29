@@ -3,14 +3,14 @@ import numpy as np
 def to_file(wvls, R_f, T_f, R_r, T_r, R = None, T = None, filename=None):
 
     if filename is None:
-        file = "RTA.txt"
+        filename = "RTA.txt"
 
     if R is None and T is None:
         elements_per_row = 5
     else:
         elements_per_row = 7
 
-    with open(file, "w") as f:
+    with open(filename, "w") as f:
         # Loop through the arrays in steps of 7 elements to
         # extract elements for the current row
         for i in range(0, len(wvls), elements_per_row):
