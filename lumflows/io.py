@@ -1,4 +1,6 @@
 import numpy as np
+import csv
+from .utils import num_points
 
 def to_file(wvls, R_f, T_f, R_r, T_r, R = None, T = None, filename=None):
 
@@ -36,3 +38,29 @@ def to_file(wvls, R_f, T_f, R_r, T_r, R = None, T = None, filename=None):
             for j in range(len(_wavelength)):
                 row = f"{_wavelength[j].item():.5f}, {_R_f[j].item():.5f}, {_T_f[j].item():.5f}, {_R_r[j].item():.5f}, {_T_r[j].item():.5f}, {_R[j].item():.5f}, {_T[j].item():.5f}\n"
                 f.write(row)
+
+def csv2txt(inputf, outputf, headr = 2, interpolate = True, start_x = 250.0, stop_x = 1000.0, step = 1, transpose = True, save_to_file = True):
+
+    buffer = csv(file=inputf + ".csv", header=2)
+
+    if transpose is True:
+        buffer = buffer.transpose()
+
+    if interpolate is True:
+        number_of_points = num_points(start=start_x, end=stop_x, step=step)
+        x = np.linspace(start=start_x, stop=stop_x, num=number_of_points)
+        n = np.interp(x=x, xp=buffer[0], fp=buffer[1])
+        k = np.interp(x=x, xp=buffer[0], fp=buffer[2])
+    else:
+        x = buffer[0]
+        n = buffer[1]
+        k = buffer[2]
+
+    if save_to_file is True:
+        output_file = output_file
+        with open(output_file, "w") as f:
+            f.write("wvls\t n\t k\n")
+            for wvl, n_i, k_i in zip(x, n, k):
+                f.write(f"{wvl}\t{n_i:.5f}\t{k_i:.5f}\n")
+
+    return x, n, k

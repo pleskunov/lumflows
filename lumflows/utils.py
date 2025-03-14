@@ -7,6 +7,12 @@ DISPERSION_SUFFIX = "_nk"
 #SPECTRAL_DATA_SUFFIX = "_rt" # Deprecated because we calculate R and T at the backside interface ourselves
 EXTENSION = ".txt"
 
+def num_points(start: float, end: float, step: float) -> int:    
+    return int(np.ceil((end - start) / step)) + 1
+
+def normalize(x):
+    return (x - min(x)) / (max(x) - min(x))
+
 def zeros_like(array):
     return np.zeros_like(array, dtype=float)
 
