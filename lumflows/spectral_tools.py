@@ -1,4 +1,8 @@
 from .utils import *
+from .constants import speed_of_light
+
+def freq_to_wavelength(f):
+    return np.array((speed_of_light / f) * 1e9).flatten()
 
 def compute_with_backside(wvls, R_front, T_front, R_front_reverse, T_front_reverse, substrate_name = "B270", N_substrate = None):
 

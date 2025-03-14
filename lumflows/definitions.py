@@ -1,3 +1,9 @@
+NANO = 1e-9
+MICRO = 1e-6
+
+CENTER_SPAN_LAYOUT = 0
+MIN_MAX_LAYOUT = 1
+
 FDTD_DOMAIN = "FDTD" 
 FDTD_DOMAIN_2D = 1
 FDTD_DOMAIN_3D = 2
@@ -29,7 +35,6 @@ PML_STABILZED = 2
 PML_STEEP_ANGLE = 3
 PML_CUSTOM = 4
 
-
 FDP_MONITOR_POINT = 1
 FDP_MONITOR_LINEAR_X = 2
 FDP_MONITOR_LINEAR_Y = 3
@@ -51,3 +56,21 @@ FDP_MONITOR_OPTS = ["standard fourier transform",
 
 LIGHT_SRC_INJECTION_AX = "injection axis"
 LIGHT_SRC_INJECTION = "direction"
+LIGHT_SRC_AOI_THETA = "angle theta"
+LIGHT_SRC_POLARIZATION = "polarization angle"
+
+P_POLARIZED = 0
+S_POLARIZED = 90
+UNPOLARIZED = 45
+
+X_SPAN = "x span"
+
+X_MIN = "x min"
+X_MAX = "x max"
+Y_MIN = "y min"
+Y_MAX = "y max"
+Z_MIN = "z min"
+Z_MAX = "z max"
+
+E_X = "Ex"
+E_Y = "Ey" 

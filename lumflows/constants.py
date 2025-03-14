@@ -1,0 +1,1 @@
+speed_of_light: float = 299792458.0  # m/s
