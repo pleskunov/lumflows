@@ -1,4 +1,4 @@
-from session import Connector
+from .session import Connector
 from .definitions import *
 from .spectral_tools import freq_to_wavelength
 
